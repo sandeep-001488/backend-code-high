@@ -1,8 +1,8 @@
 //require('dotenv').config({path:'./env'})
 import dotenv from 'dotenv'
-// import { DB_NAME } from "./constants";
-// import mongoose from "mongoose";
+import {app} from './app.js'
 import connectDB from "./db/index.js";
+
 dotenv.config({path:'./env'})
 
 connectDB()
@@ -15,8 +15,8 @@ connectDB()
         })
     })
 })
-.catch((err)=>{
-    console.log("MONGO DB connection failed in index js",err);
+.catch((error)=>{
+    console.log("MONGO DB connection failed in index js",error);
 })
 
 
