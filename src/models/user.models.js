@@ -1,6 +1,10 @@
+// import dotenv from 'dotenv';
 import mongoose,{Schema} from 'mongoose'
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
+
+
+// dotenv.config();
 
 const userSchema=new mongoose.Schema({
     username:{
@@ -44,7 +48,7 @@ const userSchema=new mongoose.Schema({
         type:String
     }
 
-},{timestamps:true})
+},{timestamps:true}) ;
 
 userSchema.pre("save", async function(next){
      if(!this.isModified("password")) return next();
@@ -53,16 +57,17 @@ userSchema.pre("save", async function(next){
      next()
 })
 userSchema.methods.isPasswordCorrect = async function(password){
-    return await bcrypt.compare(password,th.password)
+    return await bcrypt.compare(password,this.password)
 }
+console.log("hello ",process.env.ACCESS_TOKEN_SECRET);
 
-userSchema.methods.generateAccessToken=function (){
+userSchema.methods.generateAccessToken= function (){
    return  jwt.sign({
         _id:this._id,
         email:this.email,
         username:this.username,
-        fullname:this.fullname
-    },ACCESS_TOKEN_SECRET,
+        fullName:this.fullName   // changed fullname to fullName
+    },process.env.ACCESS_TOKEN_SECRET, // ERROR FOUND IN 10 DAYS
     {
         expiresIn:process.env.ACCESS_TOKEN_EXPIRY
     })
@@ -70,7 +75,7 @@ userSchema.methods.generateAccessToken=function (){
 userSchema.methods.generateRefreshToken=function (){
     return  jwt.sign({
         _id:this._id,
-    },REFRESH_TOKEN_SECRET,
+    },process.env.REFRESH_TOKEN_SECRET, // ERROR FOUND IN 10 DAYS
     {
         expiresIn:process.env.REFRESH_TOKEN_EXPIRY
     })
